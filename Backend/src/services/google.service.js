@@ -5,7 +5,7 @@ import userModel from '../models/user.model.js';
 
 async function getGooGleAuth(userid) {
     const user = await userModel.findById(userid);
-    console.log("Stored Refresh Token:", user.googleRefreshToken);
+    console.log("Stored Refresh Token:------------>>",user,  user.googleRefreshToken);
     if (!user) {
         throw new Error("User not found");
     }
@@ -24,8 +24,8 @@ async function getGooGleAuth(userid) {
         scope: ['https://www.googleapis.com/auth/gmail.send']
     });
 
-    // console.log("Visit this URL to authenticate:", authUrl);
-    
+    console.log("Visit this URL to authenticate:", authUrl);
+
     oAuth2Client.setCredentials({ refresh_token: user.decryptGoogleRefreshToken() });
     return oAuth2Client;
 }

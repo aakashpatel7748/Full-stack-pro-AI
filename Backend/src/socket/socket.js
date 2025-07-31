@@ -51,7 +51,6 @@ export default function initSocket(server) {
             const response = await getResponse(messages, socket.user);
 
             // Append the response to the cache (AI)
-
             appendMessage(`connection:${socket.user._id}`, {
                 role: "assistant",
                 content: response

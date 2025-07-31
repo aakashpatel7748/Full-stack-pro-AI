@@ -85,6 +85,26 @@ server.tool(
     }
 )
 
+
+// server.tool(
+//   "clearChat",
+//   "clear the chat context or session",
+//   {},
+//   async () => {
+//     // If you are storing chat history in DB or in memory, clear it here
+
+//     return {
+//       content: [
+//         {
+//           type: "text",
+//           text: "Chat has been cleared successfully."
+//         }
+//       ]
+//     };
+//   }
+// );
+
+
 // ... set up server resources, tools, and prompts ...
 
 const transport = new StdioServerTransport();

@@ -5,7 +5,7 @@ import mcpClient from "../../mcp/client.mcp.js";
 const ai = new GoogleGenAI({ apiKey: config.GOOGLE_GEMINI_KEY });
 
 const tools = (await mcpClient.listTools()).tools;
-console.log("Tools available:", tools[0]);
+// console.log("Tools available:", tools[0]);
 
 
 function getSystemInstruction(user){
@@ -25,7 +25,7 @@ function getSystemInstruction(user){
 async function getResponse(messages, user) {
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-04-17",
+    model:"gemini-2.5-flash",
     contents: messages,
     config: {
       systemInstruction: getSystemInstruction(user),
@@ -46,7 +46,6 @@ async function getResponse(messages, user) {
   });
 
   const functionCall = response.functionCalls && response.functionCalls[0];
-
   if (functionCall) {
 
     const toolResult = await mcpClient.callTool({
