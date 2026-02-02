@@ -9,8 +9,10 @@ const Chat = () => {
   const [input, setInput] = useState("")
   const [isUploading, setIsUploading] = useState(false)
 
+  const apiBase = import.meta.env.VITE_API_URL || "https://full-stack-pro-ai.onrender.com"
+
   useEffect(() => {
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io(apiBase, {
       withCredentials: true,
     })
 
@@ -66,7 +68,7 @@ const Chat = () => {
     setMessage(prev => [...prev, { role: "user", content: `Uploaded resume: ${file.name}` }, tempMsg])
 
     try {
-      const response = await fetch("http://localhost:3000/api/resume/analyze-resume", {
+      const response = await fetch(`${apiBase}/api/resume/analyze-resume`, {
         method: "POST",
         body: formData
       })
