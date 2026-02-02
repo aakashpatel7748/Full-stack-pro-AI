@@ -5,11 +5,11 @@ function connectDB() {
     mongoose.connect(config.MONGODB_URI)
 
         .then(() => {
-            console.log("MongoDB Connected")
+            console.log("MongoDB Connected");
         })
         .catch((err) => {
-            console.error("MongoDB Connection error", err)
-        })
+            console.error("MongoDB Connection Failed (Running without DB):", err.message);
+        });
 }
 
 export default connectDB
