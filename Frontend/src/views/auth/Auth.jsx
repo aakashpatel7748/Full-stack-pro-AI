@@ -4,15 +4,16 @@ import "./Auth.css"
 const Auth = () => {
 
     const handelGoogleSignIn = () => {
-        window.location.href = ("http://localhost:3000/api/auth/google")
+        const apiBase = import.meta.env.VITE_API_URL || "https://full-stack-pro-ai.onrender.com"
+        window.location.href = (`${apiBase}/api/auth/google`)
     }
 
     return (
         <main className='auth-main'>
             <section className='auth-section'>
                 <button
-                onClick={handelGoogleSignIn}
-                 className='continue-with-google'>
+                    onClick={handelGoogleSignIn}
+                    className='continue-with-google'>
                     Continue With Google
                 </button>
             </section>
