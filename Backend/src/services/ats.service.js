@@ -1,7 +1,16 @@
 import { GoogleGenAI } from "@google/genai";
 import config from "../config/config.js";
 
-const ai = new GoogleGenAI({ apiKey: config.GOOGLE_GEMINI_KEY });
+let ai;
+const getAI = () => {
+    if (!ai) {
+        if (!config.GOOGLE_GEMINI_KEY) {
+            throw new Error("GOOGLE_GEMINI_KEY is missing in environment variables.");
+        }
+        ai = new GoogleGenAI({ apiKey: config.GOOGLE_GEMINI_KEY });
+    }
+    return ai;
+};
 
 export const calculateATSScore = async (resumeText, jobDescription = "") => {
     console.log("ATS Score Calculation Started...");
@@ -28,9 +37,9 @@ export const calculateATSScore = async (resumeText, jobDescription = "") => {
     `;
 
     try {
-        // Using gemini-2.5-flash as it is verified working in this project
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+        const aiInstance = getAI();
+        const response = await aiInstance.models.generateContent({
+            model: "gemini-1.5-flash",
             contents: [{ role: "user", parts: [{ text: prompt }] }]
         });
 

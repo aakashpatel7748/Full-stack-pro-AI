@@ -2,11 +2,18 @@ import { GoogleGenAI } from "@google/genai";
 import config from "../config/config.js"
 import mcpClient from "../../mcp/client.mcp.js";
 
-const ai = new GoogleGenAI({ apiKey: config.GOOGLE_GEMINI_KEY });
+let ai;
+const getAI = () => {
+  if (!ai) {
+    if (!config.GOOGLE_GEMINI_KEY) {
+      throw new Error("GOOGLE_GEMINI_KEY is missing in environment variables.");
+    }
+    ai = new GoogleGenAI({ apiKey: config.GOOGLE_GEMINI_KEY });
+  }
+  return ai;
+};
 
 const tools = (await mcpClient.listTools()).tools;
-// console.log("Tools available:", tools[0]);
-
 
 function getSystemInstruction(user) {
   return `
@@ -22,9 +29,11 @@ function getSystemInstruction(user) {
   `
 }
 
+
 async function getResponse(messages, user) {
   try {
-    const response = await ai.models.generateContent({
+    const aiInstance = getAI();
+    const response = await aiInstance.models.generateContent({
       model: "gemini-1.5-flash",
       contents: messages,
       config: {
@@ -61,7 +70,7 @@ async function getResponse(messages, user) {
     if (error.message.includes("429")) {
       return "AI Limit Exceeded (429): Please wait a minute before trying again. The free tier has a limit of 15-20 requests per minute.";
     }
-    return "AI Error: Something went wrong while talking to Gemini. Please try again later.";
+    return "AI Error: " + (error.message || "Something went wrong while talking to Gemini.");
   }
 }
 
