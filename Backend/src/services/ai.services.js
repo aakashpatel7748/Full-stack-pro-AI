@@ -23,45 +23,46 @@ function getSystemInstruction(user) {
 }
 
 async function getResponse(messages, user) {
-
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: messages,
-    config: {
-      systemInstruction: getSystemInstruction(user),
-      tools: [{
-        functionDeclarations: tools.map((tool) => {
-          return {
-            name: tool.name,
-            description: tool.description,
-            parameters: {
-              type: tool.inputSchema.type,
-              properties: tool.inputSchema.properties,
-              required: tool.inputSchema.required,
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: messages,
+      config: {
+        systemInstruction: getSystemInstruction(user),
+        tools: [{
+          functionDeclarations: tools.map((tool) => {
+            return {
+              name: tool.name,
+              description: tool.description,
+              parameters: {
+                type: tool.inputSchema.type,
+                properties: tool.inputSchema.properties,
+                required: tool.inputSchema.required,
+              }
             }
-          }
-        })
-      }]
+          })
+        }]
+      }
+    });
+
+    const functionCall = response.functionCalls && response.functionCalls[0];
+    if (functionCall) {
+      const toolResult = await mcpClient.callTool({
+        name: functionCall.name,
+        arguments: functionCall.args
+      })
+      const result = toolResult.content[0].text;
+      return result;
     }
-  });
-
-  const functionCall = response.functionCalls && response.functionCalls[0];
-  if (functionCall) {
-
-    const toolResult = await mcpClient.callTool({
-      name: functionCall.name,
-      arguments: functionCall.args
-    })
-
-    const result = toolResult.content[0].text;
-
-    return result;
+    const text = response.text
+    return text;
+  } catch (error) {
+    console.error("Gemini API Error:", error.message);
+    if (error.message.includes("429")) {
+      return "AI Limit Exceeded (429): Please wait a minute before trying again. The free tier has a limit of 15-20 requests per minute.";
+    }
+    return "AI Error: Something went wrong while talking to Gemini. Please try again later.";
   }
-  const text = response.text
-
-  // console.log(response.text);
-
-  return text;
 }
 
 export default getResponse;

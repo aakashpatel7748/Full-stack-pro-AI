@@ -32,35 +32,39 @@ export default function initSocket(server) {
     io.on("connection", async (socket) => {
         console.log("new client connected");
 
-        const messages =await getMessages(`connection:${socket.user._id}`);
+        const messages = await getMessages(`connection:${socket.user._id}`);
         socket.emit("chat-history", messages);
 
         socket.on("message", async (data) => {
-            const { message } = data;
+            try {
+                const { message } = data;
 
-            // Append the message to the cache (user)
+                // Append the message to the cache (user)
+                appendMessage(`connection:${socket.user._id}`, {
+                    role: "user",
+                    content: message
+                })
 
-            appendMessage(`connection:${socket.user._id}`, {
-                role: "user",
-                content: message
-            })
+                const messages = await getMessages(`connection:${socket.user._id}`);
+                const response = await getResponse(messages, socket.user);
 
-            const messages = await getMessages(`connection:${socket.user._id}`);
+                // Append the response to the cache (AI)
+                appendMessage(`connection:${socket.user._id}`, {
+                    role: "assistant",
+                    content: response
+                })
 
-
-            const response = await getResponse(messages, socket.user);
-
-            // Append the response to the cache (AI)
-            appendMessage(`connection:${socket.user._id}`, {
-                role: "assistant",
-                content: response
-            })
-            
-
-            socket.emit("message", {
-                message: response,
-                user: socket.user.name
-            });
+                socket.emit("message", {
+                    message: response,
+                    user: socket.user.name
+                });
+            } catch (error) {
+                console.error("Socket Message Error:", error);
+                socket.emit("message", {
+                    message: "An internal error occurred. Please try again.",
+                    user: "System"
+                });
+            }
         });
         socket.on("disconnect", () => {
             console.log("Client disconnected");
