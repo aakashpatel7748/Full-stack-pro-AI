@@ -5,6 +5,10 @@ import userModel from "../models/user.model.js"
 
 
 
+console.log("Passport Strategy Initializing...");
+console.log("Redirect URL:", config.GOOGLE_REDIRECT_URL);
+console.log("Client ID:", config.GOOGLE_CLIENT_ID ? "Found" : "Missing");
+
 passport.use(new Strategy({
     clientID: config.GOOGLE_CLIENT_ID,
     clientSecret: config.GOOGLE_CLIENT_SECRET,
@@ -54,9 +58,9 @@ passport.deserializeUser((user, done) => {
 
 // 👇 Add this AFTER strategy
 Strategy.prototype.authorizationParams = function (options) {
-  return {
-    access_type: 'offline',
-    prompt: 'consent'
-  };
+    return {
+        access_type: 'offline',
+        prompt: 'consent'
+    };
 };
 export default passport

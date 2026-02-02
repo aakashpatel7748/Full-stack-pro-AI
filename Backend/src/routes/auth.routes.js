@@ -25,7 +25,8 @@ router.get("/google/callback", passport.authenticate("google", {
     })
 
 
-    res.redirect("http://localhost:5173/chat")
+    const targetUrl = (process.env.FRONTEND_URL || "http://localhost:5173") + "/chat";
+    res.redirect(targetUrl);
 })
 
 
