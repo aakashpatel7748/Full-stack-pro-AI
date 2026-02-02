@@ -34,7 +34,7 @@ async function getResponse(messages, user) {
   try {
     const aiInstance = getAI();
     const response = await aiInstance.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-pro",
       contents: messages,
       config: {
         systemInstruction: getSystemInstruction(user),

@@ -39,7 +39,7 @@ export const calculateATSScore = async (resumeText, jobDescription = "") => {
     try {
         const aiInstance = getAI();
         const response = await aiInstance.models.generateContent({
-            model: "gemini-1.5-flash",
+            model: "gemini-1.5-pro",
             contents: [{ role: "user", parts: [{ text: prompt }] }]
         });
 

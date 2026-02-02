@@ -20,8 +20,8 @@ router.get("/google/callback", passport.authenticate("google", {
 
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true,
-        sameSite: "strict",
+        secure: true, // Required for SameSite=None
+        sameSite: "none", // Allow cross-site cookie usage
     })
 
 
