@@ -5,6 +5,8 @@ import config from "../src/config/config.js";
 import mongoose from "mongoose";
 import { z } from "zod";
 import fs from "fs";
+import { clearMessages } from "../src/services/cache.service.js";
+import { calculateATSScore } from "../src/services/ats.service.js";
 
 
 mongoose.connect(config.MONGODB_URI,)
@@ -45,7 +47,7 @@ server.tool(
 
 
             fs.appendFileSync("./mcp.error.json", JSON.stringify({
-            
+
                 userid,
                 to,
                 subject,
@@ -85,24 +87,63 @@ server.tool(
     }
 )
 
+server.tool(
+    "clearChat",
+    "clear the chat history for a specific user",
+    {
+        userid: z.string().describe("The ID of the user whose chat history should be cleared")
+    },
+    async ({ userid }) => {
+        try {
+            await clearMessages(`connection:${userid}`);
+            return {
+                content: [
+                    {
+                        type: "text",
+                        text: "Chat has been cleared successfully."
+                    }
+                ]
+            };
+        } catch (error) {
+            console.error("Error clearing chat:", error);
+            return {
+                content: [
+                    {
+                        type: "text",
+                        text: `Failed to clear chat: ${error.message}`
+                    }
+                ]
+            };
+        }
+    }
+);
 
-// server.tool(
-//   "clearChat",
-//   "clear the chat context or session",
-//   {},
-//   async () => {
-//     // If you are storing chat history in DB or in memory, clear it here
-
-//     return {
-//       content: [
-//         {
-//           type: "text",
-//           text: "Chat has been cleared successfully."
-//         }
-//       ]
-//     };
-//   }
-// );
+server.tool(
+    "analyzeResume",
+    "Analyze a resume text and provide an ATS score and feedback",
+    {
+        resumeText: z.string().describe("The full text content of the resume"),
+        jobDescription: z.string().optional().describe("Optional job description to compare the resume against")
+    },
+    async ({ resumeText, jobDescription }) => {
+        try {
+            const analysis = await calculateATSScore(resumeText, jobDescription);
+            return {
+                content: [{
+                    type: "text",
+                    text: analysis
+                }]
+            };
+        } catch (error) {
+            return {
+                content: [{
+                    type: "text",
+                    text: `Error analyzing resume: ${error.message}`
+                }]
+            };
+        }
+    }
+);
 
 
 // ... set up server resources, tools, and prompts ...

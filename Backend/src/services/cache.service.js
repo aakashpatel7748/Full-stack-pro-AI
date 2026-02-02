@@ -65,3 +65,7 @@ export const getMessages = async (key) => {
         ]
     }));
 };
+// Clear messages from MongoDB
+export const clearMessages = async (key) => {
+    await ChatMessage.deleteMany({ key });
+};

@@ -40,26 +40,74 @@
         }
 
         .input-area {
-            position: absolute;
-            left: 0;
             position: fixed;
             bottom: 1rem;
             width: 75%;
-            // margin: 1% 6%;
-            margin-left: 12.5%;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #000000;
+            background-color: #1a1a1a;
             border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            gap: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+
+            .upload-btn {
+                cursor: pointer;
+                color: #888;
+                display: flex;
+                align-items: center;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #fff;
+                }
+            }
 
             input {
-                padding: .5rem 0.75rem;
+                padding: .5rem 0;
                 background-color: transparent;
                 border: none;
                 outline: none;
                 width: 100%;
+                color: #fff;
+
+                &::placeholder {
+                    color: #555;
+                }
             }
+
+            .send-btn {
+                background: none;
+                border: none;
+                color: #fff;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                padding: 0.5rem;
+                border-radius: 0.5rem;
+                transition: background 0.2s;
+
+                &:hover {
+                    background-color: #333;
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+            }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     }
 

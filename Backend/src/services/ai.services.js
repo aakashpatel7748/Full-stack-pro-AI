@@ -8,7 +8,7 @@ const tools = (await mcpClient.listTools()).tools;
 // console.log("Tools available:", tools[0]);
 
 
-function getSystemInstruction(user){
+function getSystemInstruction(user) {
   return `
   <persona>
   You are a helpful  assistant. that can halp the user with their tasks. you have access to a set of tools that can help you with your tasks.
@@ -25,7 +25,7 @@ function getSystemInstruction(user){
 async function getResponse(messages, user) {
 
   const response = await ai.models.generateContent({
-    model:"gemini-2.5-flash",
+    model: "gemini-2.5-flash",
     contents: messages,
     config: {
       systemInstruction: getSystemInstruction(user),
@@ -57,7 +57,6 @@ async function getResponse(messages, user) {
 
     return result;
   }
-
   const text = response.text
 
   // console.log(response.text);
