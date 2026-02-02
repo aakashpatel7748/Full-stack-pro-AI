@@ -37,7 +37,7 @@ export default function initSocket(server) {
 
         socket.on("message", async (data) => {
             try {
-                const { message } = data;
+                console.log("Socket: Message received from user:", message);
 
                 // Append the message to the cache (user)
                 appendMessage(`connection:${socket.user._id}`, {
@@ -46,7 +46,9 @@ export default function initSocket(server) {
                 })
 
                 const messages = await getMessages(`connection:${socket.user._id}`);
+                console.log("Socket: Asking Gemini (Model: gemini-1.5-flash-001)...");
                 const response = await getResponse(messages, socket.user);
+                console.log("Socket: Response from Gemini:", response);
 
                 // Append the response to the cache (AI)
                 appendMessage(`connection:${socket.user._id}`, {

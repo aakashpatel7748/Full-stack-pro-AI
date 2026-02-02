@@ -9,7 +9,11 @@ import { clearMessages } from "../src/services/cache.service.js";
 import { calculateATSScore } from "../src/services/ats.service.js";
 
 
-mongoose.connect(config.MONGODB_URI,)
+if (config.MONGODB_URI) {
+    mongoose.connect(config.MONGODB_URI).catch(err => console.error("MCP MongoDB Connection Error:", err));
+} else {
+    console.warn("MCP Server: MONGODB_URI is undefined, skipping DB connection.");
+}
 
 const server = new McpServer({
     name: "example-server",
